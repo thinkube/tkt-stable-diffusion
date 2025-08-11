@@ -1,8 +1,24 @@
+# Web framework dependencies
+gradio==5.42.0
+fastapi>=0.115.2,<1.0  # Gradio 5.42.0 requires this range
+uvicorn[standard]>=0.14.0
+python-multipart>=0.0.9
+starlette>=0.40.0,<1.0
+
 # Stable Diffusion dependencies
-# Requires Ampere+ GPU (RTX 3090, A100, etc.)
-diffusers>=0.24.0
-transformers>=4.35.0
-accelerate>=0.24.0
-xformers>=0.0.22  # For memory efficient attention
-safetensors>=0.4.0
+# Using actual latest versions as of now
+diffusers>=0.34.0
+transformers>=4.55.0  
+accelerate>=1.10.0
+safetensors>=0.6.2
+huggingface-hub>=0.23.2
+
+# PyTorch - latest stable
+torch>=2.8.0
+torchvision>=0.15.0
+xformers>=0.0.31  # For memory efficient attention
+
+# Image processing
+Pillow>=10.0.0
+numpy>=1.24.0
 omegaconf>=2.3.0
