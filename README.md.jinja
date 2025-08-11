@@ -1,0 +1,60 @@
+# {{ project_title | default(project_name) }}
+
+Stable Diffusion image generation deployment on Thinkube platform.
+
+## 🎨 Model Configuration
+
+**Selected Model**: `{{ model_id }}`
+
+## 🚀 Access Your Service
+
+Once deployed, access your Stable Diffusion interface at:
+- **URL**: `https://{{ project_name }}.{{ domain_name }}`
+
+## 📋 Features
+
+- Text-to-image generation with {{ model_id }}
+- Gradio web interface for easy interaction
+- GPU-accelerated inference
+- Support for custom prompts and parameters
+- Image size customization (512-1536px)
+- Seed control for reproducible results
+
+## 🔧 Configuration
+
+This deployment is configured with:
+- **Model**: {{ model_id }}
+- **GPU Memory**: 20GB allocated
+- **Inference Engine**: Diffusers with fp16 precision
+- **Interface**: Gradio on port 7860
+
+## 💡 Usage Tips
+
+1. **Prompt Engineering**:
+   - Be descriptive and specific
+   - Include style keywords (photorealistic, digital art, etc.)
+   - Use negative prompts to exclude unwanted elements
+
+2. **Performance**:
+   - Start with 20-30 inference steps for quick results
+   - Increase to 50+ steps for higher quality
+   - SDXL models produce better quality but are slower
+
+3. **Memory Management**:
+   - The system automatically manages GPU memory
+   - If you encounter OOM errors, reduce image size
+
+## 📊 Resource Usage
+
+- **GPU**: 1x NVIDIA GPU (Ampere or newer)
+- **VRAM**: 8-20GB depending on model
+- **Storage**: ~20GB for model weights
+
+## 🔗 Links
+
+- [Deployment Guide](https://github.com/thinkube/tkt-stable-diffusion)
+- [Thinkube Documentation](https://github.com/thinkube/thinkube)
+- [Model Page](https://huggingface.co/{{ model_id }})
+
+---
+*Deployed with Thinkube Platform*

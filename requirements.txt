@@ -1,0 +1,8 @@
+# Stable Diffusion dependencies
+# Requires Ampere+ GPU (RTX 3090, A100, etc.)
+diffusers>=0.24.0
+transformers>=4.35.0
+accelerate>=0.24.0
+xformers>=0.0.22  # For memory efficient attention
+safetensors>=0.4.0
+omegaconf>=2.3.0
