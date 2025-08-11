@@ -13,9 +13,9 @@ accelerate>=1.10.0
 safetensors>=0.6.2
 huggingface-hub>=0.23.2
 
-# PyTorch - latest stable
-torch>=2.8.0
-torchvision>=0.15.0
+# PyTorch - latest stable with compatible versions
+torch==2.8.0
+torchvision==0.23.0
 xformers>=0.0.31  # For memory efficient attention
 
 # Image processing
