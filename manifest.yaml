@@ -1,0 +1,21 @@
+apiVersion: thinkube.io/v1
+kind: TemplateManifest
+metadata:
+  name: tkt-stable-diffusion
+  title: Stable Diffusion Image Generator
+  description: AI image generation with Stable Diffusion models (requires RTX 3090+)
+  version: 1.0.0
+  author: Thinkube Team
+  tags: ["ai", "stable-diffusion", "image-generation", "gradio", "gpu", "diffusers"]
+
+parameters:
+  - name: model_id
+    type: str
+    description: Hugging Face model ID (e.g., stabilityai/stable-diffusion-xl-base-1.0)
+    default: "stabilityai/stable-diffusion-xl-base-1.0"
+    pattern: "^[a-zA-Z0-9-]+/[a-zA-Z0-9._-]+$"
+
+secrets:
+  - name: HF_TOKEN
+    description: Hugging Face API token for accessing gated models
+    required: false

@@ -1,0 +1,192 @@
+#!/usr/bin/env python3
+"""
+Stable Diffusion Image Generation Server with Gradio UI
+For image generation on supported GPUs (RTX 3090+)
+"""
+
+import os
+import torch
+import gradio as gr
+from fastapi import FastAPI
+import uvicorn
+from diffusers import StableDiffusionXLPipeline, StableDiffusionPipeline, DPMSolverMultistepScheduler
+from PIL import Image
+import io
+import base64
+
+# Model configuration from template
+MODEL_ID = "{{ model_id }}"
+
+# Initialize FastAPI app
+app = FastAPI(title="{{ project_name }} Stable Diffusion Server")
+
+# Determine model type and load appropriate pipeline
+print(f"Loading model: {MODEL_ID}")
+if "xl" in MODEL_ID.lower() or "sdxl" in MODEL_ID.lower():
+    # Load Stable Diffusion XL
+    pipe = StableDiffusionXLPipeline.from_pretrained(
+        MODEL_ID,
+        torch_dtype=torch.float16,
+        use_safetensors=True,
+        variant="fp16"
+    )
+else:
+    # Load standard Stable Diffusion
+    pipe = StableDiffusionPipeline.from_pretrained(
+        MODEL_ID,
+        torch_dtype=torch.float16,
+        use_safetensors=True,
+        variant="fp16"
+    )
+
+# Move to GPU
+pipe = pipe.to("cuda")
+
+# Enable memory efficient attention for lower VRAM usage
+pipe.enable_attention_slicing()
+pipe.enable_vae_slicing()
+
+# Use faster scheduler
+pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
+
+# Enable CPU offload for models if needed (helps with memory)
+# pipe.enable_model_cpu_offload()
+
+def generate_image(
+    prompt: str,
+    negative_prompt: str = "",
+    num_inference_steps: int = 30,
+    guidance_scale: float = 7.5,
+    width: int = 1024,
+    height: int = 1024,
+    seed: int = -1
+):
+    """Generate image using Stable Diffusion"""
+    
+    # Set seed for reproducibility
+    if seed == -1:
+        import random
+        seed = random.randint(0, 2147483647)
+    
+    generator = torch.Generator("cuda").manual_seed(seed)
+    
+    # Generate image
+    try:
+        image = pipe(
+            prompt=prompt,
+            negative_prompt=negative_prompt,
+            num_inference_steps=num_inference_steps,
+            guidance_scale=guidance_scale,
+            width=width,
+            height=height,
+            generator=generator
+        ).images[0]
+        
+        return image, f"Generated with seed: {seed}"
+    except Exception as e:
+        return None, f"Error: {str(e)}"
+
+# Create Gradio interface
+with gr.Blocks(title="{{ project_title | default(project_name) }}", theme="soft") as demo:
+    gr.Markdown(f"# {{ project_title | default(project_name) }}")
+    gr.Markdown(f"Generate images with {MODEL_ID}")
+    
+    with gr.Row():
+        with gr.Column(scale=3):
+            prompt = gr.Textbox(
+                label="Prompt",
+                placeholder="Describe the image you want to generate...",
+                lines=3
+            )
+            negative_prompt = gr.Textbox(
+                label="Negative Prompt",
+                placeholder="What you don't want in the image...",
+                lines=2
+            )
+            
+            with gr.Row():
+                with gr.Column():
+                    steps = gr.Slider(
+                        minimum=10,
+                        maximum=100,
+                        value=30,
+                        step=1,
+                        label="Inference Steps"
+                    )
+                    guidance = gr.Slider(
+                        minimum=1.0,
+                        maximum=20.0,
+                        value=7.5,
+                        step=0.5,
+                        label="Guidance Scale"
+                    )
+                
+                with gr.Column():
+                    width = gr.Slider(
+                        minimum=512,
+                        maximum=1536,
+                        value=1024,
+                        step=64,
+                        label="Width"
+                    )
+                    height = gr.Slider(
+                        minimum=512,
+                        maximum=1536,
+                        value=1024,
+                        step=64,
+                        label="Height"
+                    )
+            
+            seed = gr.Number(
+                label="Seed (-1 for random)",
+                value=-1,
+                precision=0
+            )
+            
+            generate_btn = gr.Button("Generate", variant="primary", size="lg")
+        
+        with gr.Column(scale=4):
+            output_image = gr.Image(label="Generated Image", type="pil")
+            status = gr.Textbox(label="Status", interactive=False)
+    
+    # Examples
+    gr.Examples(
+        examples=[
+            ["A majestic mountain landscape at sunset, highly detailed, 8k, photorealistic", "blurry, low quality", 30, 7.5],
+            ["A futuristic city with flying cars, cyberpunk style, neon lights", "daytime, realistic", 40, 8.0],
+            ["A cute robot playing chess in a library, digital art style", "human, realistic", 35, 7.0],
+        ],
+        inputs=[prompt, negative_prompt, steps, guidance],
+    )
+    
+    # Connect generate button
+    generate_btn.click(
+        fn=generate_image,
+        inputs=[prompt, negative_prompt, steps, guidance, width, height, seed],
+        outputs=[output_image, status]
+    )
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "model": MODEL_ID,
+        "engine": "Stable Diffusion",
+        "device": "cuda" if torch.cuda.is_available() else "cpu",
+        "vram_allocated": f"{torch.cuda.memory_allocated() / 1024**3:.2f} GB" if torch.cuda.is_available() else "N/A"
+    }
+
+# Mount Gradio app with proper path
+# Use a subpath to avoid root path issues
+app = gr.mount_gradio_app(app, demo, path="/gradio")
+
+# Add root redirect
+from fastapi.responses import RedirectResponse
+
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/gradio")
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=7860)
