@@ -1,4 +1,4 @@
-FROM {{ container_registry }}/library/ai-inference-base:latest
+FROM {{ container_registry }}/library/ai-inference-base:cuda13.0-torch2.3-py3.12
 
 # Copy application code
 COPY server.py .
