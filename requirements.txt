@@ -13,10 +13,11 @@ accelerate>=1.10.0
 safetensors>=0.6.2
 huggingface-hub>=0.23.2
 
-# PyTorch - highest stable compatible versions
-torch==2.7.1
-torchvision==0.22.1
-xformers==0.0.31.post1  # Latest xformers, requires torch 2.7.1
+# PyTorch - already installed in base image (torch 2.9.0, torchvision from cu130)
+# Uncomment only if you need to override base image versions:
+# torch>=2.9.0
+# torchvision>=0.22.1
+xformers>=0.0.31  # Memory-efficient attention for Stable Diffusion
 
 # Image processing
 Pillow>=10.0.0
