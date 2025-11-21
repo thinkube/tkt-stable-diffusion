@@ -5,7 +5,7 @@ metadata:
   title: Stable Diffusion Image Generator
   description: AI image generation with Stable Diffusion models (requires RTX 3090+)
   version: 1.0.0
-  author: Thinkube Team
+  author: Alejandro Martínez Corriá
   tags: ["ai", "stable-diffusion", "image-generation", "gradio", "gpu", "diffusers"]
 
 parameters:
