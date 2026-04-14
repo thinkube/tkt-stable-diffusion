@@ -4,6 +4,9 @@ metadata:
   name: "{{ project_name }}"
 
 spec:
+  deployment:
+    type: app
+
   containers:
     - name: diffusion
       build: .
@@ -11,12 +14,11 @@ spec:
       size: xlarge
       gpu:
         count: 1
-        memory: "20Gi"  # SDXL needs ~20GB GPU memory
+        memory: "20Gi"
       health: /health
       test:
-        enabled: false  # Testing image generation requires GPU, skip in CI/CD
-  
-  # Routing configuration
+        enabled: false
+
   routes:
     - path: /
       to: diffusion
