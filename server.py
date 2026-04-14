@@ -14,11 +14,13 @@ from PIL import Image
 import io
 import base64
 
-# Model configuration from template
-MODEL_ID = "{{ model_id }}"
+# Model configuration from environment
+MODEL_ID = os.environ.get("MODEL_ID", "stabilityai/stable-diffusion-xl-base-1.0")
+APP_NAME = os.environ.get("APP_NAME", "stable-diffusion")
+APP_TITLE = os.environ.get("APP_TITLE", APP_NAME)
 
 # Initialize FastAPI app
-app = FastAPI(title="{{ project_name }} Stable Diffusion Server")
+app = FastAPI(title=f"{APP_NAME} Stable Diffusion Server")
 
 # Determine model type and load appropriate pipeline
 print(f"Loading model: {MODEL_ID}")
@@ -62,14 +64,14 @@ def generate_image(
     seed: int = -1
 ):
     """Generate image using Stable Diffusion"""
-    
+
     # Set seed for reproducibility
     if seed == -1:
         import random
         seed = random.randint(0, 2147483647)
-    
+
     generator = torch.Generator("cuda").manual_seed(seed)
-    
+
     # Generate image
     try:
         image = pipe(
@@ -81,16 +83,16 @@ def generate_image(
             height=height,
             generator=generator
         ).images[0]
-        
+
         return image, f"Generated with seed: {seed}"
     except Exception as e:
         return None, f"Error: {str(e)}"
 
 # Create Gradio interface
-with gr.Blocks(title="{{ project_title | default(project_name) }}", theme="soft") as demo:
-    gr.Markdown(f"# {{ project_title | default(project_name) }}")
+with gr.Blocks(title=APP_TITLE, theme="soft") as demo:
+    gr.Markdown(f"# {APP_TITLE}")
     gr.Markdown(f"Generate images with {MODEL_ID}")
-    
+
     with gr.Row():
         with gr.Column(scale=3):
             prompt = gr.Textbox(
@@ -103,7 +105,7 @@ with gr.Blocks(title="{{ project_title | default(project_name) }}", theme="soft"
                 placeholder="What you don't want in the image...",
                 lines=2
             )
-            
+
             with gr.Row():
                 with gr.Column():
                     steps = gr.Slider(
@@ -120,7 +122,7 @@ with gr.Blocks(title="{{ project_title | default(project_name) }}", theme="soft"
                         step=0.5,
                         label="Guidance Scale"
                     )
-                
+
                 with gr.Column():
                     width = gr.Slider(
                         minimum=512,
@@ -136,19 +138,19 @@ with gr.Blocks(title="{{ project_title | default(project_name) }}", theme="soft"
                         step=64,
                         label="Height"
                     )
-            
+
             seed = gr.Number(
                 label="Seed (-1 for random)",
                 value=-1,
                 precision=0
             )
-            
+
             generate_btn = gr.Button("Generate", variant="primary", size="lg")
-        
+
         with gr.Column(scale=4):
             output_image = gr.Image(label="Generated Image", type="pil")
             status = gr.Textbox(label="Status", interactive=False)
-    
+
     # Examples
     gr.Examples(
         examples=[
@@ -158,7 +160,7 @@ with gr.Blocks(title="{{ project_title | default(project_name) }}", theme="soft"
         ],
         inputs=[prompt, negative_prompt, steps, guidance],
     )
-    
+
     # Connect generate button
     generate_btn.click(
         fn=generate_image,
