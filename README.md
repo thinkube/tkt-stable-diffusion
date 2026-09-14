@@ -8,7 +8,7 @@ AI image generation with Stable Diffusion models and Gradio UI.
 |----------|-------------|
 | `MODEL_ID` | Hugging Face model ID (default: stabilityai/stable-diffusion-xl-base-1.0) |
 | `APP_NAME` | Application name |
-| `HF_TOKEN` | Hugging Face token (optional, for gated models) |
+| `HF_TOKEN` | Hugging Face token for gated models. Optional: add it on the Secrets page of thinkube-control |
 
 ## Features
 
