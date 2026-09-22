@@ -89,7 +89,7 @@ def generate_image(
         return None, f"Error: {str(e)}"
 
 # Create Gradio interface
-with gr.Blocks(title=APP_TITLE, theme="soft") as demo:
+with gr.Blocks(title=APP_TITLE) as demo:
     gr.Markdown(f"# {APP_TITLE}")
     gr.Markdown(f"Generate images with {MODEL_ID}")
 
@@ -181,7 +181,7 @@ async def health_check():
 
 # Mount Gradio app with proper path
 # Use a subpath to avoid root path issues
-app = gr.mount_gradio_app(app, demo, path="/gradio")
+app = gr.mount_gradio_app(app, demo, path="/gradio", theme="soft")
 
 # Add root redirect
 from fastapi.responses import RedirectResponse

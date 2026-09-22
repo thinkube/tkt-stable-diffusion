@@ -1,9 +1,9 @@
 # Web framework dependencies
-gradio==5.42.0
-fastapi>=0.115.2,<1.0  # Gradio 5.42.0 requires this range
+gradio==6.28.0
+fastapi>=0.115.2,<1.0  # Gradio 6.28.0 requires this range
 uvicorn[standard]>=0.14.0
 python-multipart>=0.0.9
-starlette>=0.40.0,<1.0
+starlette>=1.0.1,<2.0  # Gradio 6.28.0 requires this range
 
 # Stable Diffusion dependencies
 # Using actual latest versions as of now
