@@ -21,8 +21,8 @@ AI image generation with Stable Diffusion models and Gradio UI.
 
 ## License
 
-Apache License 2.0 - See [LICENSE](LICENSE)
+MIT. Code generated from this template is yours: no attribution required, and you may license the app you build however you choose. See [LICENSE](LICENSE).
 
 ## Copyright
 
-Copyright 2025 Alejandro Martinez Corria
+Copyright Alejandro Martínez Corriá and the Thinkube contributors
