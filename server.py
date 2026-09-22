@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+
+# Copyright Alejandro Martínez Corriá and the Thinkube contributors
+# SPDX-License-Identifier: MIT
+
 """
 Stable Diffusion Image Generation Server with Gradio UI
 For image generation on supported GPUs (RTX 3090+)
