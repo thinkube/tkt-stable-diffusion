@@ -42,3 +42,6 @@ generated/
 *.safetensors
 *.ckpt
 models/
+
+# Local Claude Code and Tandem state
+.claude/ .tandem/
