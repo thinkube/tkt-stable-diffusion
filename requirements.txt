@@ -1,0 +1,25 @@
+# Web framework dependencies
+gradio==6.28.0
+fastapi>=0.115.2,<1.0  # Gradio 6.28.0 requires this range
+uvicorn[standard]>=0.14.0
+python-multipart>=0.0.9
+starlette>=1.0.1,<2.0  # Gradio 6.28.0 requires this range
+
+# Stable Diffusion dependencies
+# Using actual latest versions as of now
+diffusers>=0.34.0
+transformers>=4.55.0  
+accelerate>=1.10.0
+safetensors>=0.6.2
+huggingface-hub>=0.23.2
+
+# PyTorch - already installed in base image (torch 2.9.0, torchvision from cu130)
+# Uncomment only if you need to override base image versions:
+# torch>=2.9.0
+# torchvision>=0.22.1
+xformers>=0.0.31  # Memory-efficient attention for Stable Diffusion
+
+# Image processing
+Pillow>=10.0.0
+numpy>=1.24.0
+omegaconf>=2.3.0
